@@ -256,7 +256,7 @@ const App: React.FC = () => {
           <div className="border-t border-slate-200 dark:border-slate-700"></div>
           <div>
             <h5 className="font-semibold font-sans">12. Somatic Mutation as an Explanation for Epigenetic Aging</h5>
-            <p className="leading-relaxed mt-1">This landmark study in <em>Nature Aging</em> discovered that a single age-related mutation event (C>T at methylated CpG sites) is associated with predictable remodeling of the surrounding methylation landscape. This allowed the construction of a "mutation clock" that predicts chronological age with accuracy comparable to epigenetic clocks, suggesting that epigenetic aging is largely a downstream readout of cumulative somatic mutation burden.</p>
+            <p className="leading-relaxed mt-1">This landmark study in <em>Nature Aging</em> discovered that a single age-related mutation event (C{'>'}T at methylated CpG sites) is associated with predictable remodeling of the surrounding methylation landscape. This allowed the construction of a "mutation clock" that predicts chronological age with accuracy comparable to epigenetic clocks, suggesting that epigenetic aging is largely a downstream readout of cumulative somatic mutation burden.</p>
             <div className="text-xs italic text-slate-500 dark:text-slate-400 mt-2 space-y-1">
               <p><strong>Citation:</strong> Koch, Z., et al. (2024). Somatic mutation as an explanation for epigenetic aging. <em>Nature Aging, 5</em>, 709-719.</p>
               <p><strong>DOI:</strong> <a href="https://doi.org/10.1038/s43587-024-00794-x" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline">https://doi.org/10.1038/s43587-024-00794-x</a></p>
