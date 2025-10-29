@@ -441,13 +441,13 @@ const App: React.FC = () => {
       content: (
         <div className="space-y-4">
           <p className="leading-relaxed">
-            As a member of The Grassmann Lab, my research contributes to our group's primary mission: to unravel the complex genetic architecture of inherited diseases and understand how genetic factors influence their severity and progression. Our work aims to move beyond simple risk identification to pinpoint novel therapeutic targets, especially for conditions with limited treatment options.
+            As a member of The Grassmann Lab led by Prof. Felix Grassmann, my research contributes to our group's primary mission: to unravel the complex genetic architecture of inherited diseases and understand how genetic factors influence their severity and progression. The work of Prof. Felix Grassmann aims to move beyond simple risk identification to pinpoint novel therapeutic targets, especially for conditions with limited treatment options.
           </p>
           <p className="leading-relaxed">
-            We investigate the genetic connections between different diseases, searching for shared pathways that might reveal new treatment opportunities. A key focus is on less-explored genetic markers, such as somatic mosaicism of sex chromosomes, which are emerging as crucial indicators for both disease risk and severity. By integrating these approaches, we hope to improve risk prediction, disease management, and ultimately, patient outcomes.
+            He investigates the genetic connections between different diseases, searching for shared pathways that might reveal new treatment opportunities. A key focus is on less-explored genetic markers, such as somatic mosaicism of sex chromosomes, which are emerging as crucial indicators for both disease risk and severity. By integrating these approaches, he hopes to improve risk prediction, disease management, and ultimately, patient outcomes.
           </p>
           <div>
-            <h4 className="font-semibold mb-2">Official Profiles:</h4>
+            <h4 className="font-semibold mb-2">Official Profiles of Prof. Felix Grassmann:</h4>
             <ul className="list-disc list-inside space-y-1">
               <li><a href="https://ki.se/en/people/felix-grassmann" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline">Karolinska Institutet Profile</a></li>
               <li><a href="https://www.health-and-medical-university.de/ueber-uns-2/team/team-fakultaet-medizin/prof-dr-felix-grassmann/" target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline">Health and Medical University Potsdam</a></li>
