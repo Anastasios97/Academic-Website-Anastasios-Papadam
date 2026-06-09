@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import type { Publication, Conference } from './types';
 import SectionCard from './components/SectionCard';
 import Modal from './components/Modal';
-import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, FileTextIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './icons';
+import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, FileTextIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './components/Icons';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -138,7 +138,7 @@ const App: React.FC = () => {
                 <li id="ref-11">Winkler TW, Brandl C, Grassmann F, Gorski M, Stark K, Loss J, et al. Investigating the modulation of genetic effects on late AMD by age and sex: Lessons learned and future directions. Ophthalmic Genetics. 2018 Aug 8;39(4):425–32.</li>
                 <li id="ref-12">Fritsche LG, Igl W, Bailey JNC, Grassmann F, Sengupta S, Bragg-Gresham JL, et al. A large genome-wide association study of age-related macular degeneration highlights contributions of rare and common variants. Nature Genetics. 2016 Feb 8;48(2):134–43.</li>
                 <li id="ref-13">Grassmann F, Heid IM, Weber BHF. Recombinant Haplotypes Narrow the ARMS2/HTRA1 Association Signal for Age-Related Macular Degeneration. Genetics [Internet]. 2017 Feb;205(2):553–62.</li>
-                <li id="ref-14">Gorski M, Grunin M, Herold JM, Fröhlich B, Behr M, Wheeler N, et al. Diverse ancestry GWAS for advanced age-related macular degeneration in TOPMed-imputed and Ophthalmic Genetics & Genomics Consortium. Ophthalmic Genetics. 2021 Dec 9;43(1):59–71.</li>
+                <li id="ref-14">Gorski M, Grunin M, Herold JM, Fröhlich B, Behr M, Wheeler N, et al. Diverse ancestry GWAS for advanced age-related macular degeneration in TOPMed-imputed and Ophthalmic Genetics Consortium. Ophthalmic Genetics. 2021 Dec 9;43(1):59–71.</li>
                 <li id="ref-15">Francis M, Gorman BR, Bigdeli TB, Genovese G, Voloudakis G, Bendl J, et al. Multi-ancestry genome-wide association meta-analysis of mosaic loss of chromosome Y in peripheral blood. Nat Commun. 2023 Sep 12;14(1):5625.</li>
                 <li id="ref-16">Han X, Gharahkhani P, Mitchell P, Liew G, Hewitt AW, MacGregor S. Genome-wide meta-analysis identifies novel loci associated with age-related macular degeneration. Nature Genetics. 2020 Oct 5;52(10):1053–62.</li>
                 <li id="ref-17">Jacobs KB, Yeager M, Zhou W, Wacholder S, Wang Z, Rodriguez-Santiago B, et al. Detectable clonal mosaicism and its relationship to aging and cancer. Nat Genet [Internet]. 2012 Jun;44(6):651–8.</li>
