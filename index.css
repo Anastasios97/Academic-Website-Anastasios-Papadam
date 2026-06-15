@@ -235,9 +235,20 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1.13fr) minmax(22rem, 0.87fr);
   gap: 4rem;
-  align-items: center;
+  align-items: stretch;
   min-height: 46rem;
-  padding: 6rem 0 4rem;
+  padding: 6rem 0 7rem;
+}
+
+.hero-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero-intro {
+  min-width: 0;
 }
 
 .eyebrow {
@@ -894,15 +905,23 @@ button {
 
 .metrics-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   overflow: hidden;
-  margin-bottom: 7rem;
+  margin-top: auto;
   border-radius: 1.2rem;
 }
 
 .metric {
   padding: 1.4rem 1.5rem;
   border-right: 1px solid var(--line);
+}
+
+.metric:nth-child(2) {
+  border-right: 0;
+}
+
+.metric:nth-child(-n+2) {
+  border-bottom: 1px solid var(--line);
 }
 
 .metric:last-child {
@@ -1803,8 +1822,8 @@ button {
   }
 
   .hero {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 0.95fr);
+    gap: 1.5rem;
     padding-top: 5rem;
   }
 
@@ -1835,6 +1854,17 @@ button {
 
   .packages-coming-soon {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 780px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .metrics-strip {
+    margin-top: 0;
   }
 }
 
@@ -1900,7 +1930,6 @@ button {
 
   .metrics-strip {
     grid-template-columns: repeat(2, 1fr);
-    margin-bottom: 5rem;
   }
 
   .metric:nth-child(2) {

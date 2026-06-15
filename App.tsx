@@ -595,44 +595,46 @@ const App: React.FC = () => {
 
         <main id="top">
           <section className="hero" aria-labelledby="hero-title">
-            <div>
-              <p className="eyebrow"><span className="eyebrow-dot" /> Open to postdoctoral opportunities</p>
-              <p className="hero-kicker">PhD in genetic epidemiology</p>
-              <h1 id="hero-title" className="hero-title">
-                Decoding <span className="gradient-text">ageing.</span> Saving <span className="gradient-text">sight.</span>
-              </h1>
-              <p className="hero-copy">
-                I study how mosaicism, genetic variation, and biological ageing shape
-                age-related macular degeneration and other complex diseases. By translating
-                population-scale genomic and phenotypic data into biological insight, I aim
-                to uncover shared mechanisms of disease risk and progression across retinal,
-                systemic, and age-related conditions.
-              </p>
-              <div className="hero-actions">
-                <button onClick={() => setActiveModal('research')} className="primary-button">
-                  Explore my research <span aria-hidden="true">&rarr;</span>
-                </button>
-                <a href="mailto:a.papadam@hotmail.com" className="secondary-button">
-                  <MailIcon className="w-4 h-4" /> Start a conversation
-                </a>
+            <div className="hero-content">
+              <div className="hero-intro">
+                <p className="eyebrow"><span className="eyebrow-dot" /> Open to postdoctoral opportunities</p>
+                <p className="hero-kicker">PhD in genetic epidemiology</p>
+                <h1 id="hero-title" className="hero-title">
+                  Decoding <span className="gradient-text">ageing.</span> Saving <span className="gradient-text">sight.</span>
+                </h1>
+                <p className="hero-copy">
+                  I study how mosaicism, genetic variation, and biological ageing shape
+                  age-related macular degeneration and other complex diseases. By translating
+                  population-scale genomic and phenotypic data into biological insight, I aim
+                  to uncover shared mechanisms of disease risk and progression across retinal,
+                  systemic, and age-related conditions.
+                </p>
+                <div className="hero-actions">
+                  <button onClick={() => setActiveModal('research')} className="primary-button">
+                    Explore my research <span aria-hidden="true">&rarr;</span>
+                  </button>
+                  <a href="mailto:a.papadam@hotmail.com" className="secondary-button">
+                    <MailIcon className="w-4 h-4" /> Start a conversation
+                  </a>
+                </div>
+                <div className="hero-tags" aria-label="Research methods and interests">
+                  <span className="data-tag">MOSAICISM</span>
+                  <span className="data-tag">AMD</span>
+                  <span className="data-tag">GWAS</span>
+                  <span className="data-tag">BIOLOGICAL AGEING</span>
+                  <span className="data-tag">MACHINE LEARNING</span>
+                </div>
               </div>
-              <div className="hero-tags" aria-label="Research methods and interests">
-                <span className="data-tag">MOSAICISM</span>
-                <span className="data-tag">AMD</span>
-                <span className="data-tag">GWAS</span>
-                <span className="data-tag">BIOLOGICAL AGEING</span>
-                <span className="data-tag">MACHINE LEARNING</span>
-              </div>
+
+              <section className="metrics-strip glass-panel" aria-label="Career highlights">
+                <div className="metric"><span className="metric-value">3</span><span className="metric-label">2025 publications</span></div>
+                <div className="metric"><span className="metric-value">PhD</span><span className="metric-label">University of Aberdeen</span></div>
+                <div className="metric"><span className="metric-value">3</span><span className="metric-label">Countries of experience</span></div>
+                <div className="metric"><span className="metric-value">4+</span><span className="metric-label">Research programmes</span></div>
+              </section>
             </div>
 
             <GenomeSystemsVisual />
-          </section>
-
-          <section className="metrics-strip glass-panel" aria-label="Career highlights">
-            <div className="metric"><span className="metric-value">3</span><span className="metric-label">2025 publications</span></div>
-            <div className="metric"><span className="metric-value">PhD</span><span className="metric-label">University of Aberdeen</span></div>
-            <div className="metric"><span className="metric-value">3</span><span className="metric-label">Countries of experience</span></div>
-            <div className="metric"><span className="metric-value">4+</span><span className="metric-label">Research programmes</span></div>
           </section>
 
           <section id="research-focus" className="page-section">
