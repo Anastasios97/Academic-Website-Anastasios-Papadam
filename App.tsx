@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import type { Publication, Conference } from './types';
-import SectionCard from './components/SectionCard';
 import Modal from './components/Modal';
-import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, FileTextIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './components/Icons';
+import InsightsDigest from './components/InsightsDigest';
+import GenomeSystemsVisual from './components/GenomeSystemsVisual';
+import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './components/Icons';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -44,7 +45,7 @@ const App: React.FC = () => {
       doi: "10.1111/acel.14473",
     },
     {
-      title: "Tapping natures rhythm: the role of season in mitochondrial function and genetics in the UK biobank",
+      title: "Tapping nature's rhythm: the role of season in mitochondrial function and genetics in the UK Biobank",
       authors: "Papadam A, Mihov M, Koller A, Weissensteiner H, Stark K, Grassmann F.",
       journal: "Hum Genomics",
       year: 2025,
@@ -151,7 +152,7 @@ const App: React.FC = () => {
         </div>
       ),
     },
-    news: {
+    newsArchive: {
       id: 'news',
       title: 'Scientific News & Insights',
       icon: <NewsIcon />,
@@ -517,6 +518,12 @@ const App: React.FC = () => {
         </div>
       )
     },
+    news: {
+      id: 'news',
+      title: 'Monthly Research Insights',
+      icon: <NewsIcon />,
+      content: <InsightsDigest />,
+    },
   };
 
   const navLinks = [
@@ -525,11 +532,22 @@ const App: React.FC = () => {
     { id: 'boards', label: 'Boards' },
     { id: 'news', label: 'Insights' },
     { id: 'publications', label: 'Publications' },
+    { id: 'packages', label: 'Packages' },
+    { id: 'tutorials', label: 'Tutorials' },
     { id: 'lab', label: 'Lab'},
     { id: 'about', label: 'About' },
   ];
 
   const closeModal = () => setActiveModal(null);
+
+  const handleNavigation = (id: string) => {
+    if (id === 'tutorials' || id === 'packages') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    setActiveModal(id);
+  };
 
   const renderModal = () => {
     if (!activeModal) return null;
@@ -549,60 +567,288 @@ const App: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen text-slate-700 dark:text-slate-300 font-serif">
-      <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-        <header className="flex justify-between items-center mb-8">
-          <div className="flex items-center">
-            <AcademicCapIcon className="w-8 h-8 text-sky-600 dark:text-sky-400 mr-3" />
-            <div>
-              <h1 className="text-2xl font-black text-slate-800 dark:text-slate-100 font-sans">Anastasios Papadam</h1>
-              <p className="text-md text-slate-500 dark:text-slate-400">PhD | Genetic Epidemiology</p>
-            </div>
-          </div>
-          <button onClick={toggleDarkMode} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 dark:focus:ring-offset-slate-900 transition-colors" aria-label="Toggle dark mode">
-            {isDarkMode ? <SunIcon /> : <MoonIcon />}
+    <div className="site-shell">
+      <div className="site-container">
+        <header className="site-header glass-panel">
+          <a href="#top" className="brand-mark" aria-label="Anastasios Papadam home">
+            <span className="brand-orb">
+              <AcademicCapIcon className="w-5 h-5" />
+            </span>
+            <span>
+              <span className="brand-name">Anastasios Papadam</span>
+              <span className="brand-role">Genetic epidemiology</span>
+            </span>
+          </a>
+
+          <nav className="desktop-nav" aria-label="Main navigation">
+            {navLinks.map(link => (
+              <button key={link.id} onClick={() => handleNavigation(link.id)} className="nav-button">
+                {link.label}
+              </button>
+            ))}
+          </nav>
+
+          <button onClick={toggleDarkMode} className="theme-toggle" aria-label="Toggle color theme">
+            {isDarkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
           </button>
         </header>
 
-        <nav className="mb-8 p-2 bg-white/60 dark:bg-slate-800/40 backdrop-blur-sm rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm sticky top-4 z-40">
-          <ul className="flex flex-wrap justify-center sm:justify-start gap-x-2 gap-y-1 sm:gap-x-4">
-            {navLinks.map(link => (
-              <li key={link.id}>
-                <button onClick={() => setActiveModal(link.id)} className="block px-3 py-1.5 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/30 rounded-md transition-colors">
-                  {link.label}
+        <main id="top">
+          <section className="hero" aria-labelledby="hero-title">
+            <div>
+              <p className="eyebrow"><span className="eyebrow-dot" /> Open to postdoctoral opportunities</p>
+              <p className="hero-kicker">PhD in genetic epidemiology</p>
+              <h1 id="hero-title" className="hero-title">
+                Decoding <span className="gradient-text">ageing.</span> Saving <span className="gradient-text">sight.</span>
+              </h1>
+              <p className="hero-copy">
+                I study how mosaicism, genetic variation, and biological ageing shape
+                age-related macular degeneration and other complex diseases. By translating
+                population-scale genomic and phenotypic data into biological insight, I aim
+                to uncover shared mechanisms of disease risk and progression across retinal,
+                systemic, and age-related conditions.
+              </p>
+              <div className="hero-actions">
+                <button onClick={() => setActiveModal('research')} className="primary-button">
+                  Explore my research <span aria-hidden="true">&rarr;</span>
                 </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        
-        <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="md:col-span-2 lg:col-span-3">
-            <SectionCard id="about-card" title={sections.about.title} icon={sections.about.icon}>
-              {sections.about.content}
-            </SectionCard>
-          </div>
-           <SectionCard id="lab-card" title={sections.lab.title} icon={sections.lab.icon}>
-            {sections.lab.content}
-          </SectionCard>
-          <SectionCard id="funder-card" title={sections.funder.title} icon={sections.funder.icon}>
-            {sections.funder.content}
-          </SectionCard>
-          <SectionCard id="donate-card" title={sections.donate.title} icon={sections.donate.icon}>
-            {sections.donate.content}
-          </SectionCard>
+                <a href="mailto:a.papadam@hotmail.com" className="secondary-button">
+                  <MailIcon className="w-4 h-4" /> Start a conversation
+                </a>
+              </div>
+              <div className="hero-tags" aria-label="Research methods and interests">
+                <span className="data-tag">MOSAICISM</span>
+                <span className="data-tag">AMD</span>
+                <span className="data-tag">GWAS</span>
+                <span className="data-tag">BIOLOGICAL AGEING</span>
+                <span className="data-tag">MACHINE LEARNING</span>
+              </div>
+            </div>
 
+            <GenomeSystemsVisual />
+          </section>
+
+          <section className="metrics-strip glass-panel" aria-label="Career highlights">
+            <div className="metric"><span className="metric-value">3</span><span className="metric-label">2025 publications</span></div>
+            <div className="metric"><span className="metric-value">PhD</span><span className="metric-label">University of Aberdeen</span></div>
+            <div className="metric"><span className="metric-value">3</span><span className="metric-label">Countries of experience</span></div>
+            <div className="metric"><span className="metric-value">4+</span><span className="metric-label">Research programmes</span></div>
+          </section>
+
+          <section id="research-focus" className="page-section">
+            <div className="section-heading">
+              <div>
+                <span className="section-index">01 / Research focus</span>
+                <h2 className="section-title">From genetic signal to biological meaning.</h2>
+              </div>
+              <p className="section-copy">
+                My work connects large-scale genomic evidence with clinically relevant
+                questions in retinal health, disease progression, and healthy ageing.
+              </p>
+            </div>
+
+            <div className="focus-grid">
+              <article className="focus-card focus-card-primary">
+                <span className="card-number">R / 01</span>
+                <h3>Mosaicism in macular degeneration</h3>
+                <p>
+                  Investigating somatic chromosomal abundance and mosaic loss of the
+                  Y chromosome as potential drivers of AMD risk, lesion growth, and prognosis.
+                </p>
+                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about mosaicism research">+</button>
+              </article>
+              <article className="focus-card focus-card-secondary">
+                <span className="card-number">R / 02</span>
+                <h3>Biological ageing</h3>
+                <p>Mapping differential organ ageing to retinal disease and systemic health.</p>
+                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about biological ageing research">+</button>
+              </article>
+              <article className="focus-card focus-card-secondary">
+                <span className="card-number">R / 03</span>
+                <h3>Predictive genomics</h3>
+                <p>Using genetic risk scores and machine learning to model disease outcomes.</p>
+                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about predictive genomics research">+</button>
+              </article>
+            </div>
+          </section>
+
+          <section id="publications" className="page-section">
+            <div className="section-heading">
+              <div>
+                <span className="section-index">02 / Selected work</span>
+                <h2 className="section-title">Latest peer-reviewed research.</h2>
+              </div>
+              <button onClick={() => setActiveModal('publications')} className="secondary-button">
+                Publications and conferences
+              </button>
+            </div>
+
+            <div className="publication-list glass-panel">
+              {publications.map((pub) => (
+                <a
+                  key={pub.doi}
+                  href={pub.doi ? `https://doi.org/${pub.doi}` : '#publications'}
+                  target={pub.doi ? '_blank' : undefined}
+                  rel={pub.doi ? 'noopener noreferrer' : undefined}
+                  className="publication-row"
+                >
+                  <span className="publication-year">{pub.year}</span>
+                  <span className="publication-title">{pub.title}</span>
+                  <span className="publication-journal">{pub.journal}<br />{pub.authors}</span>
+                  <span className="publication-arrow" aria-hidden="true">{'\u2197'}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <section id="experience" className="page-section">
+            <div className="section-heading">
+              <div>
+                <span className="section-index">03 / Profile</span>
+                <h2 className="section-title">Research built across disciplines.</h2>
+              </div>
+              <p className="section-copy">
+                Genetics, epidemiology, imaging, machine learning, and ethical review,
+                connected by one aim: research that improves human health.
+              </p>
+            </div>
+
+            <div className="experience-layout">
+              <article className="profile-panel glass-panel">
+                <div>
+                  <div className="profile-monogram">AP</div>
+                  <h3>Anastasios Papadam</h3>
+                  <p>
+                    Researcher from Athens, Greece, with an integrated Master's in
+                    Genetics and a PhD focused on mosaicism in age-related macular degeneration.
+                  </p>
+                </div>
+                <div>
+                  <div className="profile-links">
+                    <a href="https://www.linkedin.com/in/anastasios-papadam-11b432146" target="_blank" rel="noopener noreferrer" className="profile-link"><LinkedinIcon className="w-4 h-4" /> LinkedIn</a>
+                    <a href="https://orcid.org/0000-0002-6780-6311" target="_blank" rel="noopener noreferrer" className="profile-link"><OrcidIcon className="w-4 h-4" /> ORCID</a>
+                    <a href="https://www.researchgate.net/profile/Anastasios-Papadam-2" target="_blank" rel="noopener noreferrer" className="profile-link"><ResearchGateIcon className="w-4 h-4" /> ResearchGate</a>
+                  </div>
+                  <button onClick={() => setActiveModal('about')} className="primary-button mt-4">Full profile</button>
+                </div>
+              </article>
+
+              <article className="timeline-panel glass-panel">
+                <div className="timeline-item">
+                  <span className="timeline-date">2024</span>
+                  <div className="timeline-content">
+                    <h3>Genentech</h3>
+                    <span>Research Intern / California, US</span>
+                    <p>Genome-wide association studies connecting image-derived phenotypes with genetic variants and functional evidence.</p>
+                  </div>
+                </div>
+                <div className="timeline-item">
+                  <span className="timeline-date">PhD</span>
+                  <div className="timeline-content">
+                    <h3>University of Aberdeen</h3>
+                    <span>Genetic Epidemiology / Scotland, UK</span>
+                    <p>Doctoral research on somatic chromosomal mosaicism, AMD risk, geographic atrophy progression, and biological ageing.</p>
+                  </div>
+                </div>
+                <div className="timeline-item">
+                  <span className="timeline-date">2023-now</span>
+                  <div className="timeline-content">
+                    <h3>Ethics Review Board</h3>
+                    <span>School of Medicine, Medical Sciences and Nutrition</span>
+                    <p>Reviewing research governance, participant risk, informed consent, and data protection safeguards.</p>
+                  </div>
+                </div>
+                <button onClick={() => setActiveModal('experience')} className="secondary-button">View complete experience</button>
+              </article>
+            </div>
+
+            <div className="support-grid">
+              <article className="support-card glass-panel">
+                <div>
+                  <h3>The Grassmann Lab</h3>
+                  <p>Genetic architecture, shared disease pathways, and functional variants.</p>
+                </div>
+                <button onClick={() => setActiveModal('lab')} className="card-link static" aria-label="Learn about the Grassmann Lab">+</button>
+              </article>
+              <article className="support-card glass-panel">
+                <div>
+                  <h3>Fight for Sight</h3>
+                  <p>PhD research supported by the UK's leading eye research charity.</p>
+                </div>
+                <button onClick={() => setActiveModal('funder')} className="card-link static" aria-label="Learn about the research funder">+</button>
+              </article>
+            </div>
+          </section>
+
+          <section id="packages" className="page-section packages-section">
+            <div className="packages-panel glass-panel">
+              <div className="packages-heading">
+                <div>
+                  <span className="section-index">04 / Software packages</span>
+                  <p className="tutorials-status"><span className="eyebrow-dot" /> In development</p>
+                  <h2 className="section-title">Research tools, built to be reused.</h2>
+                </div>
+                <p className="section-copy">
+                  I am developing open and reproducible software packages for genetic
+                  epidemiology. More information will be shared as they approach release.
+                </p>
+              </div>
+
+              <div className="packages-coming-soon" aria-label="Software packages coming soon">
+                <div className="package-orbit" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <div>
+                  <span className="package-coming-label">Upcoming releases</span>
+                  <h3>Software packages are coming soon.</h3>
+                  <p>Package names, documentation, and source-code links will appear here at a later date.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="tutorials" className="page-section tutorials-section">
+            <div className="tutorials-panel glass-panel">
+              <div className="tutorials-copy">
+                <span className="section-index">05 / Tutorials</span>
+                <p className="tutorials-status"><span className="eyebrow-dot" /> Knowledge hub in development</p>
+                <h2 className="section-title">Practical science, explained clearly.</h2>
+                <p className="section-copy">
+                  This space will host future tutorials, research workflows, and accessible
+                  guides for working with genetic and epidemiological data.
+                </p>
+              </div>
+
+              <div className="tutorials-preview" aria-label="Upcoming tutorial formats">
+                <article className="tutorial-placeholder">
+                  <span>01</span>
+                  <strong>Step-by-step guides</strong>
+                  <small>Coming soon</small>
+                </article>
+                <article className="tutorial-placeholder">
+                  <span>02</span>
+                  <strong>Code and workflows</strong>
+                  <small>Coming soon</small>
+                </article>
+                <article className="tutorial-placeholder">
+                  <span>03</span>
+                  <strong>Research explainers</strong>
+                  <small>Coming soon</small>
+                </article>
+              </div>
+            </div>
+          </section>
         </main>
-        
-        <footer className="text-center mt-12 py-6 border-t border-slate-200 dark:border-slate-700">
-          <div className="flex justify-center gap-6 mb-4">
-            <a href="mailto:a.papadam@hotmail.com" title="Personal Email" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"><MailIcon className="w-6 h-6" /></a>
-            <a href="mailto:a.papadam.21@abdn.ac.uk" title="Work Email" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"><MailIcon className="w-6 h-6" /></a>
-            <a href="https://www.linkedin.com/in/anastasios-papadam-11b432146" target="_blank" rel="noopener noreferrer" title="LinkedIn" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"><LinkedinIcon className="w-6 h-6" /></a>
-            <a href="https://www.researchgate.net/profile/Anastasios-Papadam-2" target="_blank" rel="noopener noreferrer" title="ResearchGate" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"><ResearchGateIcon className="w-6 h-6" /></a>
-            <a href="https://orcid.org/0000-0002-6780-6311" target="_blank" rel="noopener noreferrer" title="ORCID" className="text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors"><OrcidIcon className="w-6 h-6" /></a>
+
+        <footer className="site-footer">
+          <p>&copy; {new Date().getFullYear()} Anastasios Papadam.</p>
+          <div className="footer-links">
+            <a href="mailto:a.papadam@hotmail.com" title="Email"><MailIcon className="w-4 h-4" /></a>
+            <a href="https://www.linkedin.com/in/anastasios-papadam-11b432146" target="_blank" rel="noopener noreferrer" title="LinkedIn"><LinkedinIcon className="w-4 h-4" /></a>
+            <a href="https://orcid.org/0000-0002-6780-6311" target="_blank" rel="noopener noreferrer" title="ORCID"><OrcidIcon className="w-4 h-4" /></a>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">&copy; {new Date().getFullYear()} Anastasios Papadam. All rights reserved.</p>
         </footer>
       </div>
       {renderModal()}

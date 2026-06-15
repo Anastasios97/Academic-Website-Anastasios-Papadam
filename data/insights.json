@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-06-15T15:19:47.060Z",
+  "periodLabel": "June 2026",
+  "source": {
+    "name": "Europe PMC",
+    "url": "https://europepmc.org/",
+    "description": "Peer-reviewed literature indexed by Europe PMC"
+  },
+  "articles": [
+    {
+      "id": "10.1007/s10067-026-08217-5",
+      "topic": "Genetics & Genomics",
+      "title": "Associations of cardiovascular health and genetic susceptibility with incident psoriatic arthritis: findings from two cohort studies.",
+      "summary": "Introduction Psoriatic arthritis (PsA), a chronic inflammatory disease associated with psoriasis, may be influenced by cardiovascular health (CVH). This study aims to investigate the associations between three CVH scores (Life's Simple 7 (LS7), Life's Essential 8 (LE8), and Life's Crucial 9 (LC9)) and a psychological health (PH) score with PsA risk and potential interactions with genetic susceptibility....",
+      "authors": "Li P, Wang X, Tang B, Gu P, Chen G, Mao X, Xiao T, Li H.",
+      "journal": "Clinical rheumatology",
+      "published": "2026-06-13",
+      "doi": "10.1007/s10067-026-08217-5",
+      "url": "https://doi.org/10.1007/s10067-026-08217-5",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1038/s41698-026-01516-9",
+      "topic": "Genetics & Genomics",
+      "title": "Genomic co-alterations and immune-related adverse events shape outcomes of thymic malignancies treated with immune checkpoint inhibitors.",
+      "summary": "Thymic carcinoma, thymoma, and thymic neuroendocrine tumors are rare malignancies with limited treatment options in advanced stages. Immune checkpoint inhibitors (ICIs) have shown preliminary activity in thymic tumors, although their clinical benefit and toxicity profile remain incompletely defined....",
+      "authors": "Tan HN, Le H, Frej KBH, Kang L, Champiat S, Meric-Bernstam F, Fossella F, Naing A, Sharon E, Altan M, Dumbrava EE.",
+      "journal": "NPJ precision oncology",
+      "published": "2026-06-12",
+      "doi": "10.1038/s41698-026-01516-9",
+      "url": "https://doi.org/10.1038/s41698-026-01516-9",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1080/21645515.2026.2687297",
+      "topic": "Genetics & Genomics",
+      "title": "Causal associations between antibody-mediated immune responses to infectious agents and cardiovascular inflammatory diseases: A Mendelian randomization study based on UK Biobank and FinnGen.",
+      "summary": "A two-sample Mendelian randomization study was performed to evaluate causal associations between 46 pathogen-specific antibodies and six cardiovascular inflammatory diseases: myocarditis, pericarditis, endocarditis, coronary atherosclerosis (CAS), polyarteritis nodosa (PAN), and giant cell arteritis (GCA). Antibody data came from UK Biobank, diseases data came from FinnGen....",
+      "authors": "Huang Q, Pan W, Sun S, Chen W, Lin J.",
+      "journal": "Human vaccines & immunotherapeutics",
+      "published": "2026-06-12",
+      "doi": "10.1080/21645515.2026.2687297",
+      "url": "https://doi.org/10.1080/21645515.2026.2687297",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.7189/jogh.16.04169",
+      "topic": "Genetics & Genomics",
+      "title": "Residential green space mitigates genetic susceptibility to incident irritable bowel syndrome in a prospective cohort of 376 749 individuals.",
+      "summary": "Background Environmental exposures may influence irritable bowel syndrome (IBS) pathogenesis, but the interplay between genetic risk, residential green/blue space, and IBS incidence remains unexplored. Methods We aimed to study the association between green/blue space and incident IBS, and to assess effect modification by genetic susceptibility. The study included 376 749 UK Biobank participants at baseline....",
+      "authors": "Kou Z, Li R, Wang J, Shao Z, Feng J, Wei M, Fu T, Chen L, Zheng G, Lin H, Liu K.",
+      "journal": "Journal of global health",
+      "published": "2026-06-12",
+      "doi": "10.7189/jogh.16.04169",
+      "url": "https://doi.org/10.7189/jogh.16.04169",
+      "isOpenAccess": true
+    },
+    {
+      "id": "10.1016/j.xcrm.2026.102869",
+      "topic": "Retinal Health",
+      "title": "Subretinal rAAV2-based VEGF-Trap gene therapy for neovascular age-related macular degeneration: Preclinical assessment and phase 1 trial results.",
+      "summary": "Intraocular vascular endothelial growth factor (VEGF) antagonists for neovascular age-related macular degeneration (nAMD) require frequent injections, leading to treatment burden and suboptimal outcomes. LX102 is an rAAV2-based gene therapy encoding VEGF-Trap via subretinal delivery....",
+      "authors": "Li T, Feng J, Yang X, Yang S, Chen J, Wu Y, Li X, Ni Z, Liu Y, Song M, Huang P, Zheng K, Wang H, Xu X, Sun J, Wang F, Jia H, Sun X.",
+      "journal": "Cell reports. Medicine",
+      "published": "2026-06-12",
+      "doi": "10.1016/j.xcrm.2026.102869",
+      "url": "https://doi.org/10.1016/j.xcrm.2026.102869",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1016/j.ymthe.2026.06.018",
+      "topic": "Retinal Health",
+      "title": "Cerebrospinal Delivery of a Bidirectional Aav9 Vector Improves Optic Nerve and Retinal Pathology in a Sheep Model of Tay-Sachs Disease.",
+      "summary": "Tay-Sachs disease (TSD) is a fatal neurodegenerative lysosomal storage disease. The Jacob sheep is the only large animal model of TSD, yet ocular pathology and the therapeutic potential of gene therapy remain poorly defined....",
+      "authors": "Story BD, Thomasy SM, Adelman SA, Taghian T, Lopez Y, Ardon M, Shiraishi H, Khan S, Khan M, Do M, Benatti HR, Bertrand S, Prestigiacomo R, Gately R, Martin DR, Sena-Esteves M, Xie J, Gao G, Teixeira LBC, Shaw GC, Marsh-Armstrong N, Gray-Edwards HL.",
+      "journal": "Molecular therapy : the journal of the American Society of Gene Therapy",
+      "published": "2026-06-11",
+      "doi": "10.1016/j.ymthe.2026.06.018",
+      "url": "https://doi.org/10.1016/j.ymthe.2026.06.018",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1016/j.exer.2026.111121",
+      "topic": "Retinal Health",
+      "title": "To delineate the role of Zinc alpha 2 Glycoprotein in the Pathophysiology of Diabetic retinopathy using in vitro models of Retinal endothelial cells and pericytes.",
+      "summary": "Purpose To study the mechanistic role of Zinc Alpha 2 Glycoprotein (ZAG) in the pathophysiology of diabetic retinopathy (DR) through in vitro models. Methods Human retinal endothelial cells (HREC) and Human Retinal Pericytes (HRP) were cultured under normal glucose (5.5 mM) and high glucose (25 mM) conditions and then exposed to recombinant ZAG....",
+      "authors": "Babu RB, Shajahan S, Arumugam K, Rajesh BS.",
+      "journal": "Experimental eye research",
+      "published": "2026-06-11",
+      "doi": "10.1016/j.exer.2026.111121",
+      "url": "https://doi.org/10.1016/j.exer.2026.111121",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1016/j.envpol.2026.128577",
+      "topic": "Retinal Health",
+      "title": "PFAS exposure is associated with retinal neurotoxicity in Chinese adolescents: Mechanistic insights from integrated toxicogenomic and in vitro analyses.",
+      "summary": "Per- and polyfluoroalkyl substances (PFAS) have raised increasing concerns due to their potential neurotoxicity; however, their effects on retina, a highly specialized neural tissue, remain unclear. This study aimed to investigate the retinal toxicity of PFAS in adolescents and to elucidate underlying molecular mechanisms and therapeutic targets....",
+      "authors": "Dong XX, Gong SY, Hu YH, Liang G, Xu H, Li DL, Zhao Y, Pan CW.",
+      "journal": "Environmental pollution (Barking, Essex : 1987)",
+      "published": "2026-06-11",
+      "doi": "10.1016/j.envpol.2026.128577",
+      "url": "https://doi.org/10.1016/j.envpol.2026.128577",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1038/s41588-026-02633-8",
+      "topic": "Ageing Biology",
+      "title": "A progeria syndrome links DNA hypermethylation to age-related pathology.",
+      "summary": "Declining tissue function and regenerative capacity underlie many chronic diseases. Experimentally establishing the mechanistic basis for such tissue aging presents substantial challenges, given decades-long timescales and multifactorial origins....",
+      "authors": "Sarni D, Neary G, Carroll PL, Vink CS, Billard CV, Isobe T, Weng X, Portman JR, McCartney DL, Heyn P, van 't Hof RJ, Morrison LR, Martin CA, Stok C, Harley ME, Leitch A, van den Ancker M, Robertson N, Kitto L, Clark R, Rennie M, Popravko A, McClure JJ, Parry DA, Camiolo G, Leah T, Jakobczyk H, Megaw R, McKie L, Marshall GF, Balkic N, Amiel J, Barragán Arévalo T, Bronken McCarthy G, Buchanan CA, Buffet A, Cascón A, Cogne B, Conrad S, Cueto-González AM, Currás-Freixes M, Houge GD, Fong CT, George-Abraham JK, Gibson K, Ibáñez L, Longo N, Lussey-Lepoutre C, Miller BS, Moles-Fernandez A, Pillai NR, Tvrdik T, Vincent M, Yokoyama E, Abbott CM, Sanchez-Luque FJ, Ottersbach K, De Bari C, Roelofs AJ, Tillotson R, Kranc KR, Brown SJ, Marioni RE, Crisan M, Göttgens B, Henderson NC, Semple RK, Myant KB, Dzierzak E, Reijns MAM, Sproul D, Jackson AP.",
+      "journal": "Nature genetics",
+      "published": "2026-06-12",
+      "doi": "10.1038/s41588-026-02633-8",
+      "url": "https://doi.org/10.1038/s41588-026-02633-8",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1038/s41598-026-55980-1",
+      "topic": "Ageing Biology",
+      "title": "HMGA2 identified via m6A-senescence multi-omics in laryngeal squamous cell carcinoma.",
+      "summary": "N6-methyladenosine (m6A) modification and cellular senescence have been individually implicated in tumor biology, but the landscape of m6A-related senescence genes in laryngeal squamous cell carcinoma (LSCC) remains underexplored....",
+      "authors": "Jin M, Qu L, Xu Z, Teng S, Liu S, Li Q, Zhang F, Hao Q, Wang P, Zhao R, Yan B, Sun Y.",
+      "journal": "Scientific reports",
+      "published": "2026-06-09",
+      "doi": "10.1038/s41598-026-55980-1",
+      "url": "https://doi.org/10.1038/s41598-026-55980-1",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1177/13872877261449392",
+      "topic": "Ageing Biology",
+      "title": "Longevity and cognitive resilience in a Colombian family carrying the APOE ε2 variant.",
+      "summary": "APOE is the strongest genetic risk factor for late-onset Alzheimer's disease. Despite global efforts to promote resilience, delay cognitive decline, and slow aging, APOE ε2, one of the most robust resilience-associated variants, remains relatively underexplored in translational research. Exceptional longevity offers a window into cognitive trajectories....",
+      "authors": "Guerrero A, Galvis-Garrido ND, Bocanegra Y, Vásquez D, Becerra JC, Zuluaga Y, Baena A, Zubiri V, Alzate D, Osorio L, Hincapié L, Madrigal L, García G, Guzmán C, Restrepo F, Vidal M, Martínez L, Martínez JE, Malotaux V, Tristão-Pereira C, Perez-Corredor P, Vacano GN, Lopera F, Arboleda-Velasquez JF, Quiroz YT, Aguillon D.",
+      "journal": "Journal of Alzheimer's disease : JAD",
+      "published": "2026-06-04",
+      "doi": "10.1177/13872877261449392",
+      "url": "https://doi.org/10.1177/13872877261449392",
+      "isOpenAccess": false
+    },
+    {
+      "id": "10.1152/ajpheart.00012.2026",
+      "topic": "Ageing Biology",
+      "title": "Progranulin deficiency induces premature vascular senescence and dysfunction.",
+      "summary": "Significance: Cellular senescence-an age-associated state characterized by irreversible cell cycle arrest and pro-inflammatory signaling-contributes to vascular dysfunction and cardiovascular disease. However, the molecular mechanisms linking senescence to vascular impairment remain incompletely defined....",
+      "authors": "Luvizotto RAM, Nascimento AF, Pimenta GF, Costa RM, Beling T, Singh S, Alves JV, Awata W, Russ A, Haastrup A, Cuevas R, Behzadi P, St Hilaire C, Roberts J, Bruder A, Bruder-Nascimento T.",
+      "journal": "American journal of physiology. Heart and circulatory physiology",
+      "published": "2026-06-03",
+      "doi": "10.1152/ajpheart.00012.2026",
+      "url": "https://doi.org/10.1152/ajpheart.00012.2026",
+      "isOpenAccess": false
+    }
+  ]
+}
