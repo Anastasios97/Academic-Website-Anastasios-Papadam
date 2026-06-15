@@ -105,13 +105,65 @@ const GenomeSystemsVisual: React.FC = () => {
           </svg>
 
           <div className="genome-nucleus">
-            <svg className="genome-helix" viewBox="0 0 90 110" aria-hidden="true">
-              <path className="helix-line helix-cyan" d="M25 5 C80 20 10 38 65 54 C120 70 35 88 65 105" />
-              <path className="helix-line helix-violet" d="M65 5 C10 20 80 38 25 54 C-30 70 55 88 25 105" />
-              <path className="helix-rungs" d="M31 14 L59 14 M24 31 L66 31 M27 51 L63 51 M25 72 L65 72 M30 94 L60 94" />
+            <svg className="genome-helix" viewBox="0 0 100 128" aria-hidden="true">
+              <defs>
+                <linearGradient id="helix-cyan-depth" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#67e8f9" stopOpacity="0.35" />
+                  <stop offset="48%" stopColor="#22d3ee" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#0891b2" stopOpacity="0.4" />
+                </linearGradient>
+                <linearGradient id="helix-violet-depth" x1="1" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#c4b5fd" stopOpacity="0.35" />
+                  <stop offset="48%" stopColor="#a78bfa" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.4" />
+                </linearGradient>
+                <linearGradient id="helix-base-depth" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.75" />
+                  <stop offset="50%" stopColor="#e2e8f0" stopOpacity="0.55" />
+                  <stop offset="100%" stopColor="#a78bfa" stopOpacity="0.75" />
+                </linearGradient>
+              </defs>
+
+              <g className="helix-base-pairs">
+                <path d="M30 9 L70 9" />
+                <path d="M42 20 L58 20" />
+                <path d="M35 32 L65 32" />
+                <path d="M20 44 L80 44" />
+                <path d="M14 56 L86 56" />
+                <path d="M27 68 L73 68" />
+                <path d="M43 80 L57 80" />
+                <path d="M31 92 L69 92" />
+                <path d="M17 104 L83 104" />
+                <path d="M22 116 L78 116" />
+              </g>
+
+              <path
+                className="helix-backbone helix-cyan"
+                d="M24 4 C77 17 77 31 24 45 C-2 53 -2 62 24 70 C77 84 77 98 24 124"
+              />
+              <path
+                className="helix-backbone helix-violet"
+                d="M76 4 C23 17 23 31 76 45 C102 53 102 62 76 70 C23 84 23 98 76 124"
+              />
+
+              <g className="helix-nodes helix-nodes-cyan">
+                <circle cx="30" cy="9" r="2.2" />
+                <circle cx="35" cy="32" r="2.2" />
+                <circle cx="14" cy="56" r="2.2" />
+                <circle cx="27" cy="68" r="2.2" />
+                <circle cx="31" cy="92" r="2.2" />
+                <circle cx="22" cy="116" r="2.2" />
+              </g>
+              <g className="helix-nodes helix-nodes-violet">
+                <circle cx="70" cy="9" r="2.2" />
+                <circle cx="65" cy="32" r="2.2" />
+                <circle cx="86" cy="56" r="2.2" />
+                <circle cx="73" cy="68" r="2.2" />
+                <circle cx="69" cy="92" r="2.2" />
+                <circle cx="78" cy="116" r="2.2" />
+              </g>
             </svg>
             <strong>GENOME</strong>
-            <span>variation</span>
           </div>
 
           <article className="impact-node impact-molecular">

@@ -517,7 +517,7 @@ button {
   align-items: center;
   justify-content: flex-end;
   flex-direction: column;
-  padding-bottom: 0.95rem;
+  padding-bottom: 0.85rem;
   border: 1px solid rgba(34, 211, 238, 0.42);
   border-radius: 50%;
   background:
@@ -531,53 +531,65 @@ button {
 
 .genome-helix {
   position: absolute;
-  top: 0.55rem;
-  width: 3.7rem;
-  height: 4.8rem;
+  top: 0.38rem;
+  width: 4.15rem;
+  height: 5.35rem;
   overflow: visible;
+  filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.14));
+  animation: helix-breathe 4.8s ease-in-out infinite;
 }
 
-.helix-line,
-.helix-rungs {
+.helix-backbone,
+.helix-base-pairs path {
   fill: none;
   vector-effect: non-scaling-stroke;
 }
 
-.helix-line {
-  stroke-width: 2.2;
+.helix-backbone {
+  stroke-width: 3;
   stroke-linecap: round;
-  stroke-dasharray: 8 5;
-  animation: helix-travel 3s linear infinite;
+  stroke-linejoin: round;
 }
 
 .helix-cyan {
-  stroke: var(--cyan);
-  filter: drop-shadow(0 0 5px rgba(34, 211, 238, 0.55));
+  stroke: url(#helix-cyan-depth);
+  filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.7));
 }
 
 .helix-violet {
-  stroke: var(--violet);
-  animation-direction: reverse;
-  filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.5));
+  stroke: url(#helix-violet-depth);
+  filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.68));
 }
 
-.helix-rungs {
-  stroke: var(--ink);
-  stroke-width: 0.8;
-  opacity: 0.25;
+.helix-base-pairs path {
+  stroke: url(#helix-base-depth);
+  stroke-width: 1.35;
+  stroke-linecap: round;
+  opacity: 0.82;
+}
+
+.helix-base-pairs path:nth-child(3n + 2) {
+  opacity: 0.4;
+}
+
+.helix-nodes circle {
+  stroke: rgba(255, 255, 255, 0.48);
+  stroke-width: 0.65;
+}
+
+.helix-nodes-cyan circle {
+  fill: var(--cyan);
+  filter: drop-shadow(0 0 3px rgba(34, 211, 238, 0.9));
+}
+
+.helix-nodes-violet circle {
+  fill: var(--violet);
+  filter: drop-shadow(0 0 3px rgba(167, 139, 250, 0.9));
 }
 
 .genome-nucleus strong {
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   letter-spacing: 0.03em;
-}
-
-.genome-nucleus span {
-  margin-top: 0.1rem;
-  color: var(--muted);
-  font-size: 0.48rem;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
 }
 
 .impact-node {
@@ -876,8 +888,11 @@ button {
   to { transform: rotate(360deg); }
 }
 
-@keyframes helix-travel {
-  to { stroke-dashoffset: -26; }
+@keyframes helix-breathe {
+  50% {
+    filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.26));
+    transform: scaleX(1.04);
+  }
 }
 
 @keyframes phenotype-breathe {
