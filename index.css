@@ -536,60 +536,108 @@ button {
 
 .genome-helix {
   position: absolute;
-  top: 0.38rem;
-  width: 4.15rem;
-  height: 5.35rem;
+  top: 0.2rem;
+  width: 5.2rem;
+  height: 6.1rem;
   overflow: visible;
   filter: drop-shadow(0 0 8px rgba(34, 211, 238, 0.14));
-  animation: helix-breathe 4.8s ease-in-out infinite;
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.genome-nucleus {
+  transition: transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 400ms ease, border-color 400ms ease;
+}
+
+.genome-nucleus strong {
+  transition: color 300ms ease;
+}
+
+.genome-nucleus.open {
+  border-color: var(--violet);
+  box-shadow: 0 0 90px rgba(124, 58, 237, 0.35), 0 0 40px var(--glow), inset 0 0 28px rgba(255, 255, 255, 0.05);
+  transform: translate(-50%, -50%) scale(1.14);
+}
+
+.genome-nucleus.open strong {
+  color: var(--violet);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+
+.genome-helix.unzipped {
+  transform: scale(1.06);
+}
+
+button.impact-node {
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+button.impact-node:hover,
+button.impact-node.active {
+  border-color: var(--line-bright);
+  background:
+    linear-gradient(120deg, rgba(34, 211, 238, 0.12), rgba(124, 58, 237, 0.1)),
+    var(--surface-strong);
+  box-shadow: 0 0 0 1px var(--line-bright), 0 14px 34px rgba(14, 165, 233, 0.22);
+}
+
+button.impact-node.active i {
+  animation: signal 1.6s infinite;
+}
+
+.phenotype-path {
+  transition: stroke-width 300ms ease, opacity 300ms ease;
+}
+
+.phenotype-path.active {
+  stroke: var(--violet);
+  stroke-width: 2.6;
+  animation-duration: 1.2s;
+  filter: drop-shadow(0 0 6px var(--violet));
 }
 
 .helix-backbone,
-.helix-base-pairs path {
+.helix-base-pairs line {
   fill: none;
   vector-effect: non-scaling-stroke;
 }
 
 .helix-backbone {
-  stroke-width: 3;
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
 .helix-cyan {
-  stroke: url(#helix-cyan-depth);
+  stroke: var(--cyan);
   filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.7));
 }
 
 .helix-violet {
-  stroke: url(#helix-violet-depth);
+  stroke: var(--violet);
   filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.68));
 }
 
-.helix-base-pairs path {
-  stroke: url(#helix-base-depth);
-  stroke-width: 1.35;
+.helix-base-pairs line {
+  stroke-width: 1.5;
   stroke-linecap: round;
-  opacity: 0.82;
-}
-
-.helix-base-pairs path:nth-child(3n + 2) {
-  opacity: 0.4;
 }
 
 .helix-nodes circle {
   stroke: rgba(255, 255, 255, 0.48);
-  stroke-width: 0.65;
+  stroke-width: 0.6;
 }
 
-.helix-nodes-cyan circle {
+.helix-node-cyan {
   fill: var(--cyan);
-  filter: drop-shadow(0 0 3px rgba(34, 211, 238, 0.9));
 }
 
-.helix-nodes-violet circle {
+.helix-node-violet {
   fill: var(--violet);
-  filter: drop-shadow(0 0 3px rgba(167, 139, 250, 0.9));
 }
 
 .genome-nucleus strong {
@@ -2861,16 +2909,6 @@ body::after {
   margin: 1.75rem 0 1.25rem;
 }
 
-.mosaic-slider > span {
-  display: block;
-  margin-bottom: 0.6rem;
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
 .mosaic-slider strong {
   margin-left: 0.4rem;
   color: var(--ink);
@@ -2966,34 +3004,152 @@ body::after {
   font-style: italic;
 }
 
-.mosaic-grid-wrap {
+.mosaic-visual {
   display: grid;
   gap: 0.9rem;
 }
 
-.mosaic-grid {
-  display: grid;
-  gap: 4px;
-  aspect-ratio: 1;
+.karyotype {
+  width: 100%;
+  aspect-ratio: 204 / 156;
   padding: 1rem;
   border: 1px solid var(--line);
   border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(34, 211, 238, 0.08), transparent 65%),
+    var(--surface-strong);
+  overflow: visible;
+}
+
+.bubble {
+  fill: var(--cyan);
+  opacity: 0.9;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bubble-breathe 3.2s ease-in-out infinite;
+  transition: fill 700ms ease, opacity 700ms ease, transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chromosome.affected .bubble {
+  fill: var(--sky);
+}
+
+.bubble.lost {
+  fill: var(--violet);
+  opacity: 0.16;
+  animation: none;
+  transform: translate(var(--dx), var(--dy)) scale(0.55);
+}
+
+@keyframes bubble-breathe {
+  50% { opacity: 0.6; }
+}
+
+.chromosome-label {
+  fill: var(--muted);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.mosaic-caption {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.mosaic-toggle {
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem;
+  margin-top: 1.5rem;
+  padding: 0.3rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
   background: var(--surface-strong);
 }
 
-.mosaic-cell {
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.55), transparent 45%), var(--cyan);
-  opacity: 0.55;
-  transform: scale(0.82);
-  transition: background-color 500ms ease, opacity 500ms ease, transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 500ms ease;
+.mosaic-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 0.65rem;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 650;
+  transition: color 200ms ease, background 200ms ease;
 }
 
-.mosaic-cell.altered {
-  background-color: var(--violet);
-  opacity: 1;
-  box-shadow: 0 0 10px rgba(124, 58, 237, 0.55);
-  transform: scale(1);
+.mosaic-toggle button strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.mosaic-toggle button.active {
+  color: #02131b;
+  background: linear-gradient(110deg, #67e8f9, #a78bfa);
+  box-shadow: 0 8px 22px rgba(124, 58, 237, 0.25);
+}
+
+.mosaic-slider-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.mosaic-slider-head > span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mosaic-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--surface-strong);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.mosaic-play:hover {
+  border-color: var(--line-bright);
+  color: var(--cyan);
+}
+
+.mosaic-play svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: currentColor;
+}
+
+.mosaic-slider small {
+  position: relative;
+}
+
+.mosaic-onset {
+  position: absolute;
+  top: 0;
+  color: var(--violet);
+  font-weight: 700;
+  white-space: nowrap;
+  transform: translateX(-50%);
 }
 
 .mosaic-legend {
@@ -3057,7 +3213,7 @@ body::after {
     grid-template-columns: 1fr;
   }
 
-  .mosaic-grid-wrap {
+  .mosaic-visual {
     max-width: 30rem;
     width: 100%;
     justify-self: center;
