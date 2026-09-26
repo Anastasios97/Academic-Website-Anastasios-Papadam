@@ -5,6 +5,8 @@ export interface Publication {
   year: number;
   doi?: string;
   abstract?: string;
+  role?: 'First author' | 'Co-author';
+  tags?: string[];
 }
 
 export interface Conference {

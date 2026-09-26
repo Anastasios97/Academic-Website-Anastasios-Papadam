@@ -1,14 +1,33 @@
 
-import React, { useState, useEffect } from 'react';
-import type { Publication, Conference } from './types';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Modal from './components/Modal';
 import InsightsDigest from './components/InsightsDigest';
 import GenomeSystemsVisual from './components/GenomeSystemsVisual';
+import CommandPalette, { type PaletteCommand } from './components/CommandPalette';
+import CiteButton from './components/CiteButton';
+import { publications, conferences, education, toolkit, contact } from './data/profile';
+import digestData from './data/insights.json';
 import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './components/Icons';
+
+interface DigestPreview {
+  periodLabel: string;
+  articles: Array<{ id: string; topic: string; title: string; journal: string; url: string; published: string }>;
+}
+
+const digest = digestData as DigestPreview;
+const MODAL_HASH_PREFIX = '#view-';
 
 const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [isMac, setIsMac] = useState(true);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<number>();
 
   useEffect(() => {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -20,9 +39,10 @@ const App: React.FC = () => {
       setIsDarkMode(false);
       document.documentElement.classList.remove('dark');
     }
+    setIsMac(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent));
   }, []);
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = useCallback(() => {
     setIsDarkMode(prev => {
       const newIsDarkMode = !prev;
       if (newIsDarkMode) {
@@ -34,55 +54,137 @@ const App: React.FC = () => {
       }
       return newIsDarkMode;
     });
-  };
-  
-  const publications: Publication[] = [
-    {
-      title: "Differential Organ Ageing Is Associated With Age‐Related Macular Degeneration",
-      authors: "Papadam A, Lionikas A, Grassmann F.",
-      journal: "Aging Cell",
-      year: 2025,
-      doi: "10.1111/acel.14473",
-    },
-    {
-      title: "Tapping nature's rhythm: the role of season in mitochondrial function and genetics in the UK Biobank",
-      authors: "Papadam A, Mihov M, Koller A, Weissensteiner H, Stark K, Grassmann F.",
-      journal: "Hum Genomics",
-      year: 2025,
-      doi: "10.1186/s40246-025-00743-8",
-    },
-     {
-      title: "Retinal polyunsaturated fatty acid supplementation reverses aging-related vision decline in mice",
-      authors: "Gao F, Tom E, Rydz C, Cho W, Kolesnikov A V., Sha Y, Papadam A, et al.",
-      journal: "Sci Transl Med",
-      year: 2025,
-      doi: "10.1126/scitranslmed.ads5769",
-    },
-  ];
+  }, []);
 
-  const conferences: Conference[] = [
-    {
-      title: "The role of somatic chromosomal abundance in risk and prognosis of age-related macular degeneration",
-      authors: "Anastasios Papadam; Bernhard Hf Weber; Emily Y Chew; Claudia Strachwitz; Felix Grassmann",
-      event: "ARVO",
-      location: "US",
-      year: 2024,
-    },
-    {
-      title: "Exploring the Genetic Landscape of Geographic Atrophy Progression: A GWAS in 2,472 Individuals with AMD",
-      authors: "Amy Stockwell; Anastasios Papadam; Tiarnan D L Keenan; Catherine Cukras; Elvira Agron; Emily Y Chew; Bernhard Hf Weber; Brian Yaspan; Felix Grassmann",
-      event: "ARVO",
-      location: "US",
-      year: 2024,
-    },
-    {
-      title: "The role of somatic chromosomal abundance in risk and prognosis of age-related macular degeneration",
-      authors: "Anastasios Papadam; Bernhard Hf Weber; Emily Y Chew; Claudia Strachwitz; Felix Grassmann",
-      event: "ProRetina",
-      location: "Germany",
-      year: 2023,
+  const showToast = useCallback((message: string) => {
+    setToast(message);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 2600);
+  }, []);
+
+  const copyEmail = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(contact.email);
+      showToast('Email address copied');
+    } catch {
+      window.location.href = `mailto:${contact.email}`;
     }
-  ];
+  }, [showToast]);
+
+  const openModal = useCallback((id: string) => {
+    setIsMenuOpen(false);
+    setActiveModal(id);
+    history.replaceState(null, '', `${MODAL_HASH_PREFIX}${id}`);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setActiveModal(null);
+    if (window.location.hash.startsWith(MODAL_HASH_PREFIX)) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, []);
+
+  const scrollToSection = useCallback((id: string) => {
+    setIsMenuOpen(false);
+    setActiveModal(null);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  // Deep links: #view-publications opens the matching dialog on load.
+  useEffect(() => {
+    const readHash = () => {
+      const { hash } = window.location;
+      if (hash.startsWith(MODAL_HASH_PREFIX)) setActiveModal(hash.slice(MODAL_HASH_PREFIX.length));
+    };
+    readHash();
+    window.addEventListener('hashchange', readHash);
+    return () => window.removeEventListener('hashchange', readHash);
+  }, []);
+
+  // Global shortcuts: Cmd/Ctrl+K or "/" opens quick navigation.
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      const isTyping = ['INPUT', 'TEXTAREA'].includes(target.tagName) || target.isContentEditable;
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setIsPaletteOpen(open => !open);
+      } else if (event.key === '/' && !isTyping) {
+        event.preventDefault();
+        setIsPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Scroll progress bar and back-to-top visibility.
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? window.scrollY / max : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
+      setShowBackToTop(window.scrollY > window.innerHeight * 0.9);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // Scroll spy for the navigation and reveal-on-scroll animations.
+  useEffect(() => {
+    const sectionsOnPage = Array.from(document.querySelectorAll<HTMLElement>('main section[id]'));
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    sectionsOnPage.forEach(section => spy.observe(section));
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let reveal: IntersectionObserver | undefined;
+    if (!reducedMotion && 'IntersectionObserver' in window) {
+      document.documentElement.classList.add('reveal-ready');
+      reveal = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            reveal?.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      document.querySelectorAll('.reveal').forEach(element => reveal?.observe(element));
+    }
+
+    return () => {
+      spy.disconnect();
+      reveal?.disconnect();
+    };
+  }, []);
+
+  // Cursor-following glow on interactive cards.
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      const target = event.target;
+      const card = target instanceof Element ? target.closest<HTMLElement>('.spotlight') : null;
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+    };
+    document.addEventListener('pointermove', handlePointerMove, { passive: true });
+    return () => document.removeEventListener('pointermove', handlePointerMove);
+  }, []);
 
   const sections = {
     research: {
@@ -351,7 +453,10 @@ const App: React.FC = () => {
                 <li key={index}>
                   <p className="font-semibold text-slate-700 dark:text-slate-200">{pub.title}</p>
                   <p className="text-sm text-slate-500 dark:text-slate-400">{pub.authors} ({pub.year}). <em>{pub.journal}</em>.</p>
-                  {pub.doi && <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" className="text-sm text-sky-500 dark:text-sky-400 hover:underline">https://doi.org/{pub.doi}</a>}
+                  <div className="modal-pub-actions">
+                    {pub.doi && <a href={`https://doi.org/${pub.doi}`} target="_blank" rel="noopener noreferrer" className="text-sm text-sky-500 dark:text-sky-400 hover:underline">https://doi.org/{pub.doi}</a>}
+                    <CiteButton publication={pub} onCopied={showToast} />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -387,6 +492,17 @@ const App: React.FC = () => {
           <p className="leading-relaxed">
             During my doctoral studies, my interests expanded to include the interconnected fields of biological ageing and how patients with AMD may exhibit differential organ ageing. I am now actively seeking a postdoctoral position where I can apply my skills in genetic epidemiology, continue advancing the understanding of mosaicism in age-related diseases, and contribute to new discoveries in the field.
           </p>
+          <div>
+            <h3 className="font-bold text-lg text-sky-600 dark:text-sky-400 pt-2 mb-2 font-sans">Education</h3>
+            <ul className="space-y-3">
+              {education.map(item => (
+                <li key={item.degree}>
+                  <p className="font-semibold text-slate-700 dark:text-slate-200">{item.degree}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{item.institution}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2">
             <a href="mailto:a.papadam@hotmail.com" className="flex items-center text-slate-500 dark:text-slate-400 hover:text-sky-500 dark:hover:text-sky-400 transition-colors">
               <MailIcon className="w-5 h-5 mr-2" /> Personal Email
@@ -527,27 +643,48 @@ const App: React.FC = () => {
   };
 
   const navLinks = [
-    { id: 'research', label: 'Research' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'boards', label: 'Boards' },
-    { id: 'news', label: 'Insights' },
+    { id: 'research-focus', label: 'Research' },
     { id: 'publications', label: 'Publications' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'toolkit', label: 'Toolkit' },
+    { id: 'insights', label: 'Insights' },
     { id: 'packages', label: 'Packages' },
     { id: 'tutorials', label: 'Tutorials' },
-    { id: 'lab', label: 'Lab'},
-    { id: 'about', label: 'About' },
+    { id: 'contact', label: 'Contact' },
   ];
 
-  const closeModal = () => setActiveModal(null);
-
-  const handleNavigation = (id: string) => {
-    if (id === 'tutorials' || id === 'packages') {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
-
-    setActiveModal(id);
-  };
+  const commands = useMemo<PaletteCommand[]>(() => {
+    const openUrl = (url: string) => () => window.open(url, '_blank', 'noopener,noreferrer');
+    return [
+      ...navLinks.map(link => ({
+        id: `section-${link.id}`,
+        label: link.label,
+        group: 'Jump to section',
+        run: () => scrollToSection(link.id),
+      })),
+      ...Object.values(sections).filter((section, index, all) => all.findIndex(s => s.id === section.id) === index).map(section => ({
+        id: `view-${section.id}`,
+        label: section.title,
+        group: 'Read more',
+        hint: 'Dialog',
+        run: () => openModal(section.id),
+      })),
+      ...publications.map(pub => ({
+        id: `pub-${pub.doi}`,
+        label: pub.title,
+        group: 'Publications',
+        hint: `${pub.journal} · ${pub.year}`,
+        keywords: `${pub.authors} paper doi`,
+        run: openUrl(`https://doi.org/${pub.doi}`),
+      })),
+      { id: 'action-theme', label: isDarkMode ? 'Switch to light theme' : 'Switch to dark theme', group: 'Actions', keywords: 'dark light mode', run: toggleDarkMode },
+      { id: 'action-email', label: 'Copy email address', group: 'Actions', keywords: 'contact mail', run: copyEmail },
+      { id: 'action-linkedin', label: 'Open LinkedIn profile', group: 'Actions', run: openUrl(contact.linkedin) },
+      { id: 'action-orcid', label: 'Open ORCID record', group: 'Actions', run: openUrl(contact.orcid) },
+      { id: 'action-researchgate', label: 'Open ResearchGate profile', group: 'Actions', run: openUrl(contact.researchGate) },
+    ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDarkMode, openModal, scrollToSection, toggleDarkMode, copyEmail]);
 
   const renderModal = () => {
     if (!activeModal) return null;
@@ -555,7 +692,7 @@ const App: React.FC = () => {
     if (!section) return null;
 
     return (
-      <Modal 
+      <Modal
         isOpen={!!activeModal}
         onClose={closeModal}
         title={section.title}
@@ -565,11 +702,17 @@ const App: React.FC = () => {
       </Modal>
     );
   };
-  
+
+  const latestInsights = digest.articles.slice(0, 3);
+  const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
+
   return (
     <div className="site-shell">
+      <a href="#top" className="skip-link">Skip to content</a>
+      <div className="scroll-progress" aria-hidden="true"><div ref={progressRef} /></div>
+
       <div className="site-container">
-        <header className="site-header glass-panel">
+        <header className={isMenuOpen ? 'site-header glass-panel menu-open' : 'site-header glass-panel'}>
           <a href="#top" className="brand-mark" aria-label="Anastasios Papadam home">
             <span className="brand-orb">
               <AcademicCapIcon className="w-5 h-5" />
@@ -582,15 +725,47 @@ const App: React.FC = () => {
 
           <nav className="desktop-nav" aria-label="Main navigation">
             {navLinks.map(link => (
-              <button key={link.id} onClick={() => handleNavigation(link.id)} className="nav-button">
+              <button
+                key={link.id}
+                onClick={() => scrollToSection(link.id)}
+                className={activeSection === link.id ? 'nav-button active' : 'nav-button'}
+                aria-current={activeSection === link.id ? 'true' : undefined}
+              >
                 {link.label}
               </button>
             ))}
           </nav>
 
-          <button onClick={toggleDarkMode} className="theme-toggle" aria-label="Toggle color theme">
-            {isDarkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
-          </button>
+          <div className="header-actions">
+            <button onClick={() => setIsPaletteOpen(true)} className="search-trigger" aria-label="Open quick navigation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+              </svg>
+              <kbd>{shortcutLabel}</kbd>
+            </button>
+            <button onClick={toggleDarkMode} className="theme-toggle" aria-label="Toggle color theme">
+              {isDarkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(open => !open)}
+              className="menu-toggle"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-nav"
+            >
+              <span /><span /><span />
+            </button>
+          </div>
+
+          <nav id="mobile-nav" className="mobile-nav" aria-label="Mobile navigation" hidden={!isMenuOpen}>
+            {navLinks.map((link, index) => (
+              <button key={link.id} onClick={() => scrollToSection(link.id)} className={activeSection === link.id ? 'active' : undefined}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                {link.label}
+              </button>
+            ))}
+          </nav>
         </header>
 
         <main id="top">
@@ -610,12 +785,12 @@ const App: React.FC = () => {
                   systemic, and age-related conditions.
                 </p>
                 <div className="hero-actions">
-                  <button onClick={() => setActiveModal('research')} className="primary-button">
+                  <button onClick={() => openModal('research')} className="primary-button">
                     Explore my research <span aria-hidden="true">&rarr;</span>
                   </button>
-                  <a href="mailto:a.papadam@hotmail.com" className="secondary-button">
+                  <button onClick={() => scrollToSection('contact')} className="secondary-button">
                     <MailIcon className="w-4 h-4" /> Start a conversation
-                  </a>
+                  </button>
                 </div>
                 <div className="hero-tags" aria-label="Research methods and interests">
                   <span className="data-tag">MOSAICISM</span>
@@ -627,8 +802,8 @@ const App: React.FC = () => {
               </div>
 
               <section className="metrics-strip glass-panel" aria-label="Career highlights">
-                <div className="metric"><span className="metric-value">3</span><span className="metric-label">2025 publications</span></div>
-                <div className="metric"><span className="metric-value">PhD</span><span className="metric-label">University of Aberdeen</span></div>
+                <div className="metric"><span className="metric-value">{publications.length}</span><span className="metric-label">2025 publications</span></div>
+                <div className="metric"><span className="metric-value">{conferences.length}</span><span className="metric-label">Conference presentations</span></div>
                 <div className="metric"><span className="metric-value">3</span><span className="metric-label">Countries of experience</span></div>
                 <div className="metric"><span className="metric-value">4+</span><span className="metric-label">Research programmes</span></div>
               </section>
@@ -638,7 +813,7 @@ const App: React.FC = () => {
           </section>
 
           <section id="research-focus" className="page-section">
-            <div className="section-heading">
+            <div className="section-heading reveal">
               <div>
                 <span className="section-index">01 / Research focus</span>
                 <h2 className="section-title">From genetic signal to biological meaning.</h2>
@@ -649,62 +824,93 @@ const App: React.FC = () => {
               </p>
             </div>
 
-            <div className="focus-grid">
-              <article className="focus-card focus-card-primary">
+            <div className="focus-grid reveal">
+              <article className="focus-card focus-card-primary spotlight">
                 <span className="card-number">R / 01</span>
                 <h3>Mosaicism in macular degeneration</h3>
                 <p>
                   Investigating somatic chromosomal abundance and mosaic loss of the
                   Y chromosome as potential drivers of AMD risk, lesion growth, and prognosis.
                 </p>
-                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about mosaicism research">+</button>
+                <button onClick={() => openModal('research')} className="card-link" aria-label="Read about mosaicism research">+</button>
               </article>
-              <article className="focus-card focus-card-secondary">
+              <article className="focus-card focus-card-secondary spotlight">
                 <span className="card-number">R / 02</span>
                 <h3>Biological ageing</h3>
                 <p>Mapping differential organ ageing to retinal disease and systemic health.</p>
-                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about biological ageing research">+</button>
+                <button onClick={() => openModal('research')} className="card-link" aria-label="Read about biological ageing research">+</button>
               </article>
-              <article className="focus-card focus-card-secondary">
+              <article className="focus-card focus-card-secondary spotlight">
                 <span className="card-number">R / 03</span>
                 <h3>Predictive genomics</h3>
                 <p>Using genetic risk scores and machine learning to model disease outcomes.</p>
-                <button onClick={() => setActiveModal('research')} className="card-link" aria-label="Read about predictive genomics research">+</button>
+                <button onClick={() => openModal('research')} className="card-link" aria-label="Read about predictive genomics research">+</button>
               </article>
             </div>
           </section>
 
           <section id="publications" className="page-section">
-            <div className="section-heading">
+            <div className="section-heading reveal">
               <div>
                 <span className="section-index">02 / Selected work</span>
                 <h2 className="section-title">Latest peer-reviewed research.</h2>
               </div>
-              <button onClick={() => setActiveModal('publications')} className="secondary-button">
+              <button onClick={() => openModal('publications')} className="secondary-button">
                 Publications and conferences
               </button>
             </div>
 
-            <div className="publication-list glass-panel">
+            <div className="publication-list glass-panel reveal">
               {publications.map((pub) => (
-                <a
-                  key={pub.doi}
-                  href={pub.doi ? `https://doi.org/${pub.doi}` : '#publications'}
-                  target={pub.doi ? '_blank' : undefined}
-                  rel={pub.doi ? 'noopener noreferrer' : undefined}
-                  className="publication-row"
-                >
+                <div key={pub.doi} className="publication-row">
                   <span className="publication-year">{pub.year}</span>
-                  <span className="publication-title">{pub.title}</span>
-                  <span className="publication-journal">{pub.journal}<br />{pub.authors}</span>
-                  <span className="publication-arrow" aria-hidden="true">{'\u2197'}</span>
-                </a>
+                  <div className="publication-main">
+                    <a
+                      href={`https://doi.org/${pub.doi}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="publication-title"
+                    >
+                      {pub.title}
+                    </a>
+                    <div className="publication-badges">
+                      {pub.role && <span className={pub.role === 'First author' ? 'pub-badge first' : 'pub-badge'}>{pub.role}</span>}
+                      {pub.tags?.map(tag => <span key={tag} className="pub-badge">{tag}</span>)}
+                    </div>
+                  </div>
+                  <span className="publication-journal"><em>{pub.journal}</em><br />{pub.authors}</span>
+                  <div className="publication-actions">
+                    <CiteButton publication={pub} onCopied={showToast} />
+                    <a
+                      href={`https://doi.org/${pub.doi}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="publication-arrow"
+                      aria-label={`Open ${pub.title} on the publisher's site`}
+                    >
+                      {'↗'}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="talks-grid reveal">
+              {conferences.map(talk => (
+                <article key={`${talk.event}-${talk.year}-${talk.title}`} className="talk-card glass-panel">
+                  <div className="talk-meta">
+                    <span className="talk-event">{talk.event}</span>
+                    <span>{talk.location} · {talk.year}</span>
+                  </div>
+                  <h3>{talk.title}</h3>
+                  <p>{talk.authors.split(';').length} authors · Conference presentation</p>
+                </article>
               ))}
             </div>
           </section>
 
           <section id="experience" className="page-section">
-            <div className="section-heading">
+            <div className="section-heading reveal">
               <div>
                 <span className="section-index">03 / Profile</span>
                 <h2 className="section-title">Research built across disciplines.</h2>
@@ -715,7 +921,7 @@ const App: React.FC = () => {
               </p>
             </div>
 
-            <div className="experience-layout">
+            <div className="experience-layout reveal">
               <article className="profile-panel glass-panel">
                 <div>
                   <div className="profile-monogram">AP</div>
@@ -727,11 +933,11 @@ const App: React.FC = () => {
                 </div>
                 <div>
                   <div className="profile-links">
-                    <a href="https://www.linkedin.com/in/anastasios-papadam-11b432146" target="_blank" rel="noopener noreferrer" className="profile-link"><LinkedinIcon className="w-4 h-4" /> LinkedIn</a>
-                    <a href="https://orcid.org/0000-0002-6780-6311" target="_blank" rel="noopener noreferrer" className="profile-link"><OrcidIcon className="w-4 h-4" /> ORCID</a>
-                    <a href="https://www.researchgate.net/profile/Anastasios-Papadam-2" target="_blank" rel="noopener noreferrer" className="profile-link"><ResearchGateIcon className="w-4 h-4" /> ResearchGate</a>
+                    <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="profile-link"><LinkedinIcon className="w-4 h-4" /> LinkedIn</a>
+                    <a href={contact.orcid} target="_blank" rel="noopener noreferrer" className="profile-link"><OrcidIcon className="w-4 h-4" /> ORCID</a>
+                    <a href={contact.researchGate} target="_blank" rel="noopener noreferrer" className="profile-link"><ResearchGateIcon className="w-4 h-4" /> ResearchGate</a>
                   </div>
-                  <button onClick={() => setActiveModal('about')} className="primary-button mt-4">Full profile</button>
+                  <button onClick={() => openModal('about')} className="primary-button mt-4">Full profile</button>
                 </div>
               </article>
 
@@ -760,33 +966,104 @@ const App: React.FC = () => {
                     <p>Reviewing research governance, participant risk, informed consent, and data protection safeguards.</p>
                   </div>
                 </div>
-                <button onClick={() => setActiveModal('experience')} className="secondary-button">View complete experience</button>
+                <div className="timeline-item">
+                  <span className="timeline-date">2022-now</span>
+                  <div className="timeline-content">
+                    <h3>Demonstrator</h3>
+                    <span>University of Aberdeen / UG &amp; PG teaching</span>
+                    <p>Mentoring students and delivering workshops on quantitative methods in genetic epidemiology.</p>
+                  </div>
+                </div>
+                <div className="timeline-actions">
+                  <button onClick={() => openModal('experience')} className="secondary-button">View complete experience</button>
+                  <button onClick={() => openModal('boards')} className="secondary-button">Board participation</button>
+                </div>
               </article>
             </div>
 
-            <div className="support-grid">
+            <div className="education-grid reveal">
+              {education.map(item => (
+                <article key={item.degree} className="education-card glass-panel">
+                  <span className="education-icon"><AcademicCapIcon className="w-5 h-5" /></span>
+                  <div>
+                    <h3>{item.degree}</h3>
+                    <span>{item.institution}</span>
+                    <p>{item.detail}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="support-grid reveal">
               <article className="support-card glass-panel">
                 <div>
                   <h3>The Grassmann Lab</h3>
                   <p>Genetic architecture, shared disease pathways, and functional variants.</p>
                 </div>
-                <button onClick={() => setActiveModal('lab')} className="card-link static" aria-label="Learn about the Grassmann Lab">+</button>
+                <button onClick={() => openModal('lab')} className="card-link static" aria-label="Learn about the Grassmann Lab">+</button>
               </article>
               <article className="support-card glass-panel">
                 <div>
                   <h3>Fight for Sight</h3>
                   <p>PhD research supported by the UK's leading eye research charity.</p>
                 </div>
-                <button onClick={() => setActiveModal('funder')} className="card-link static" aria-label="Learn about the research funder">+</button>
+                <button onClick={() => openModal('funder')} className="card-link static" aria-label="Learn about the research funder">+</button>
               </article>
             </div>
           </section>
 
+          <section id="toolkit" className="page-section">
+            <div className="section-heading reveal">
+              <div>
+                <span className="section-index">04 / Toolkit</span>
+                <h2 className="section-title">Methods I bring to a team.</h2>
+              </div>
+              <p className="section-copy">
+                A cross-disciplinary skill set spanning statistical genetics, somatic
+                mosaicism, epidemiology, data science, and the wet lab.
+              </p>
+            </div>
+
+            <div className="toolkit-grid reveal">
+              {toolkit.map((group, index) => (
+                <article key={group.area} className="toolkit-card glass-panel spotlight">
+                  <span className="card-number">T / {String(index + 1).padStart(2, '0')}</span>
+                  <h3>{group.area}</h3>
+                  <ul>
+                    {group.items.map(item => <li key={item}>{item}</li>)}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="insights" className="page-section">
+            <div className="section-heading reveal">
+              <div>
+                <span className="section-index">05 / Research insights</span>
+                <h2 className="section-title">What I'm reading this month.</h2>
+              </div>
+              <button onClick={() => openModal('news')} className="secondary-button">
+                Open the {digest.periodLabel} digest
+              </button>
+            </div>
+
+            <div className="insights-preview reveal">
+              {latestInsights.map(article => (
+                <a key={article.id} href={article.url} target="_blank" rel="noopener noreferrer" className="insight-preview-card glass-panel spotlight">
+                  <span className="insight-topic">{article.topic}</span>
+                  <h3>{article.title}</h3>
+                  <span className="insight-preview-journal">{article.journal} <span aria-hidden="true">{'↗'}</span></span>
+                </a>
+              ))}
+            </div>
+          </section>
+
           <section id="packages" className="page-section packages-section">
-            <div className="packages-panel glass-panel">
+            <div className="packages-panel glass-panel reveal">
               <div className="packages-heading">
                 <div>
-                  <span className="section-index">04 / Software packages</span>
+                  <span className="section-index">06 / Software packages</span>
                   <p className="tutorials-status"><span className="eyebrow-dot" /> In development</p>
                   <h2 className="section-title">Research tools, built to be reused.</h2>
                 </div>
@@ -806,15 +1083,21 @@ const App: React.FC = () => {
                   <span className="package-coming-label">Upcoming releases</span>
                   <h3>Software packages are coming soon.</h3>
                   <p>Package names, documentation, and source-code links will appear here at a later date.</p>
+                  <a
+                    href={`mailto:${contact.email}?subject=${encodeURIComponent('Software package release updates')}`}
+                    className="notify-link"
+                  >
+                    <MailIcon className="w-4 h-4" /> Ask to be notified on release
+                  </a>
                 </div>
               </div>
             </div>
           </section>
 
           <section id="tutorials" className="page-section tutorials-section">
-            <div className="tutorials-panel glass-panel">
+            <div className="tutorials-panel glass-panel reveal">
               <div className="tutorials-copy">
-                <span className="section-index">05 / Tutorials</span>
+                <span className="section-index">07 / Tutorials</span>
                 <p className="tutorials-status"><span className="eyebrow-dot" /> Knowledge hub in development</p>
                 <h2 className="section-title">Practical science, explained clearly.</h2>
                 <p className="section-copy">
@@ -842,17 +1125,59 @@ const App: React.FC = () => {
               </div>
             </div>
           </section>
+
+          <section id="contact" className="page-section contact-section">
+            <div className="contact-panel glass-panel reveal">
+              <div>
+                <span className="section-index">08 / Contact</span>
+                <h2 className="section-title">Let's build the next study together.</h2>
+                <p className="section-copy">
+                  I am open to postdoctoral positions and research collaborations in genetic
+                  epidemiology, somatic mosaicism, retinal disease, and biological ageing.
+                </p>
+              </div>
+              <div className="contact-actions">
+                <button onClick={copyEmail} className="contact-email" aria-label={`Copy email address ${contact.email}`}>
+                  <span className="contact-email-label">Email</span>
+                  <span className="contact-email-value">{contact.email}</span>
+                  <span className="contact-email-hint">Click to copy</span>
+                </button>
+                <div className="contact-buttons">
+                  <a href={`mailto:${contact.email}`} className="primary-button"><MailIcon className="w-4 h-4" /> Send an email</a>
+                  <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="secondary-button"><LinkedinIcon className="w-4 h-4" /> LinkedIn</a>
+                  <a href={contact.orcid} target="_blank" rel="noopener noreferrer" className="secondary-button"><OrcidIcon className="w-4 h-4" /> ORCID</a>
+                </div>
+                <button onClick={() => openModal('donate')} className="contact-support">
+                  <GiftIcon className="w-4 h-4" /> Support eye research
+                </button>
+              </div>
+            </div>
+          </section>
         </main>
 
         <footer className="site-footer">
-          <p>&copy; {new Date().getFullYear()} Anastasios Papadam.</p>
+          <p>&copy; {new Date().getFullYear()} Anastasios Papadam. <span className="footer-hint">Press <kbd>{shortcutLabel}</kbd> to navigate.</span></p>
           <div className="footer-links">
-            <a href="mailto:a.papadam@hotmail.com" title="Email"><MailIcon className="w-4 h-4" /></a>
-            <a href="https://www.linkedin.com/in/anastasios-papadam-11b432146" target="_blank" rel="noopener noreferrer" title="LinkedIn"><LinkedinIcon className="w-4 h-4" /></a>
-            <a href="https://orcid.org/0000-0002-6780-6311" target="_blank" rel="noopener noreferrer" title="ORCID"><OrcidIcon className="w-4 h-4" /></a>
+            <a href={`mailto:${contact.email}`} title="Email" aria-label="Email"><MailIcon className="w-4 h-4" /></a>
+            <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><LinkedinIcon className="w-4 h-4" /></a>
+            <a href={contact.orcid} target="_blank" rel="noopener noreferrer" title="ORCID" aria-label="ORCID"><OrcidIcon className="w-4 h-4" /></a>
+            <a href={contact.researchGate} target="_blank" rel="noopener noreferrer" title="ResearchGate" aria-label="ResearchGate"><ResearchGateIcon className="w-4 h-4" /></a>
           </div>
         </footer>
       </div>
+
+      <button
+        className={showBackToTop ? 'back-to-top visible' : 'back-to-top'}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+        tabIndex={showBackToTop ? 0 : -1}
+      >
+        <span aria-hidden="true">{'↑'}</span>
+      </button>
+
+      <div className={toast ? 'toast visible' : 'toast'} role="status" aria-live="polite">{toast}</div>
+
+      <CommandPalette isOpen={isPaletteOpen} onClose={() => setIsPaletteOpen(false)} commands={commands} />
       {renderModal()}
     </div>
   );

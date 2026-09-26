@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { XIcon } from './Icons';
 
 interface ModalProps {
@@ -9,12 +9,36 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
+const focusableSelector = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, icon, children }) => {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
     if (!isOpen) return;
 
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeButtonRef.current?.focus();
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (event.key !== 'Tab' || !panelRef.current) return;
+
+      const focusable = Array.from(panelRef.current.querySelectorAll<HTMLElement>(focusableSelector));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
@@ -24,49 +48,38 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, icon, children })
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus?.();
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div 
-      className="modal-backdrop fixed inset-0 flex justify-center items-center z-50 transition-opacity duration-300 animate-fadeIn p-3 sm:p-6"
+    <div
+      className="modal-backdrop fixed inset-0 flex justify-center items-center z-50 animate-fadeIn p-3 sm:p-6"
       onClick={onClose}
-      aria-modal="true"
-      role="dialog"
+      role="presentation"
     >
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out forwards;
-        }
-        @keyframes scaleUp {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .animate-scaleUp {
-            animation: scaleUp 0.3s ease-out forwards;
-        }
-      `}</style>
-      <div 
-        className="modal-panel rounded-2xl transition-all duration-300 w-full max-w-5xl max-h-[92vh] flex flex-col animate-scaleUp overflow-hidden"
+      <div
+        ref={panelRef}
+        className="modal-panel rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col animate-scaleUp overflow-hidden"
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
       >
         <header className="p-4 sm:p-6 border-b border-slate-200/80 dark:border-slate-700/60 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center">
             <div className="bg-cyan-100 dark:bg-cyan-950/50 p-2 rounded-lg text-cyan-600 dark:text-cyan-300 mr-4">
               {icon}
             </div>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 font-sans tracking-tight">{title}</h2>
+            <h2 id="modal-title" className="text-xl font-bold text-slate-800 dark:text-slate-100 font-sans tracking-tight">{title}</h2>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            ref={closeButtonRef}
+            onClick={onClose}
             className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors"
-            aria-label="Close modal"
+            aria-label="Close dialog"
           >
             <XIcon className="w-6 h-6" />
           </button>
