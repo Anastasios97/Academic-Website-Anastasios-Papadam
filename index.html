@@ -79,7 +79,7 @@
         document.documentElement.classList.remove('dark')
       }
 
-      tailwind.config = {
+      if (window.tailwind) tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {

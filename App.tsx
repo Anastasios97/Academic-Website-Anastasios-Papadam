@@ -5,6 +5,10 @@ import InsightsDigest from './components/InsightsDigest';
 import GenomeSystemsVisual from './components/GenomeSystemsVisual';
 import CommandPalette, { type PaletteCommand } from './components/CommandPalette';
 import CiteButton from './components/CiteButton';
+import HeroField from './components/HeroField';
+import MosaicExplorer from './components/MosaicExplorer';
+import CountUp from './components/CountUp';
+import { flushSync } from 'react-dom';
 import { publications, conferences, education, toolkit, contact } from './data/profile';
 import digestData from './data/insights.json';
 import { BriefcaseIcon, NewsIcon, BookOpenIcon, UserCircleIcon, SunIcon, MoonIcon, MailIcon, LinkedinIcon, AcademicCapIcon, ResearchGateIcon, OrcidIcon, HeartIcon, GiftIcon, UsersIcon, ShieldCheckIcon, BuildingOfficeIcon } from './components/Icons';
@@ -28,6 +32,7 @@ const App: React.FC = () => {
   const [isMac, setIsMac] = useState(true);
   const progressRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number>();
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -42,19 +47,37 @@ const App: React.FC = () => {
     setIsMac(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent));
   }, []);
 
-  const toggleDarkMode = useCallback(() => {
-    setIsDarkMode(prev => {
-      const newIsDarkMode = !prev;
-      if (newIsDarkMode) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      }
-      return newIsDarkMode;
-    });
+  const applyTheme = useCallback((dark: boolean) => {
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+    setIsDarkMode(dark);
   }, []);
+
+  // Theme switch spreads as a circular reveal from the toggle (View Transitions API).
+  const toggleDarkMode = useCallback((event?: React.MouseEvent) => {
+    const next = !document.documentElement.classList.contains('dark');
+    const doc = document as Document & {
+      startViewTransition?: (update: () => void) => { ready: Promise<void> };
+    };
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!doc.startViewTransition || reducedMotion) {
+      applyTheme(next);
+      return;
+    }
+
+    const x = event?.clientX ?? window.innerWidth - 40;
+    const y = event?.clientY ?? 40;
+    const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
+    const transition = doc.startViewTransition(() => {
+      flushSync(() => applyTheme(next));
+    });
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { duration: 650, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+      );
+    }).catch(() => undefined);
+  }, [applyTheme]);
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -172,15 +195,29 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Cursor-following glow on interactive cards.
+  // Cursor-following glow on cards, 3D tilt, and the page-level cursor aura.
   useEffect(() => {
     const handlePointerMove = (event: PointerEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+        cursorRef.current.style.opacity = '1';
+      }
       const target = event.target;
-      const card = target instanceof Element ? target.closest<HTMLElement>('.spotlight') : null;
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-      card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      if (!(target instanceof Element)) return;
+      const card = target.closest<HTMLElement>('.spotlight');
+      if (card) {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
+        card.style.setProperty('--my', `${event.clientY - rect.top}px`);
+      }
+      const tilt = target.closest<HTMLElement>('.tilt');
+      if (tilt) {
+        const rect = tilt.getBoundingClientRect();
+        const px = (event.clientX - rect.left) / rect.width - 0.5;
+        const py = (event.clientY - rect.top) / rect.height - 0.5;
+        tilt.style.setProperty('--ry', `${px * 7}deg`);
+        tilt.style.setProperty('--rx', `${-py * 7}deg`);
+      }
     };
     document.addEventListener('pointermove', handlePointerMove, { passive: true });
     return () => document.removeEventListener('pointermove', handlePointerMove);
@@ -704,6 +741,7 @@ const App: React.FC = () => {
   };
 
   const latestInsights = digest.articles.slice(0, 3);
+  const marqueeItems = ['University of Aberdeen', 'Genentech', 'Fight for Sight', 'The Grassmann Lab', 'ARVO', 'ProRetina', 'UK Biobank', 'Aging Cell', 'Human Genomics', 'Science Translational Medicine', 'BSRC Alexander Fleming'];
   const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
 
   return (
@@ -770,6 +808,7 @@ const App: React.FC = () => {
 
         <main id="top">
           <section className="hero" aria-labelledby="hero-title">
+            <HeroField />
             <div className="hero-content">
               <div className="hero-intro">
                 <p className="eyebrow"><span className="eyebrow-dot" /> Open to postdoctoral opportunities</p>
@@ -802,15 +841,27 @@ const App: React.FC = () => {
               </div>
 
               <section className="metrics-strip glass-panel" aria-label="Career highlights">
-                <div className="metric"><span className="metric-value">{publications.length}</span><span className="metric-label">2025 publications</span></div>
-                <div className="metric"><span className="metric-value">{conferences.length}</span><span className="metric-label">Conference presentations</span></div>
-                <div className="metric"><span className="metric-value">3</span><span className="metric-label">Countries of experience</span></div>
-                <div className="metric"><span className="metric-value">4+</span><span className="metric-label">Research programmes</span></div>
+                <div className="metric"><span className="metric-value"><CountUp value={publications.length} /></span><span className="metric-label">2025 publications</span></div>
+                <div className="metric"><span className="metric-value"><CountUp value={conferences.length} /></span><span className="metric-label">Conference presentations</span></div>
+                <div className="metric"><span className="metric-value"><CountUp value={3} /></span><span className="metric-label">Countries of experience</span></div>
+                <div className="metric"><span className="metric-value"><CountUp value={4} suffix="+" /></span><span className="metric-label">Research programmes</span></div>
               </section>
             </div>
 
             <GenomeSystemsVisual />
           </section>
+
+          <div className="marquee" aria-label="Institutions, collaborations and venues">
+            <div className="marquee-track">
+              {[0, 1].map(copy => (
+                <div className="marquee-group" key={copy} aria-hidden={copy === 1 ? 'true' : undefined}>
+                  {marqueeItems.map(item => (
+                    <span key={item}>{item}<i aria-hidden="true" /></span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
 
           <section id="research-focus" className="page-section">
             <div className="section-heading reveal">
@@ -825,7 +876,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="focus-grid reveal">
-              <article className="focus-card focus-card-primary spotlight">
+              <article className="focus-card focus-card-primary spotlight tilt">
                 <span className="card-number">R / 01</span>
                 <h3>Mosaicism in macular degeneration</h3>
                 <p>
@@ -834,18 +885,22 @@ const App: React.FC = () => {
                 </p>
                 <button onClick={() => openModal('research')} className="card-link" aria-label="Read about mosaicism research">+</button>
               </article>
-              <article className="focus-card focus-card-secondary spotlight">
+              <article className="focus-card focus-card-secondary spotlight tilt">
                 <span className="card-number">R / 02</span>
                 <h3>Biological ageing</h3>
                 <p>Mapping differential organ ageing to retinal disease and systemic health.</p>
                 <button onClick={() => openModal('research')} className="card-link" aria-label="Read about biological ageing research">+</button>
               </article>
-              <article className="focus-card focus-card-secondary spotlight">
+              <article className="focus-card focus-card-secondary spotlight tilt">
                 <span className="card-number">R / 03</span>
                 <h3>Predictive genomics</h3>
                 <p>Using genetic risk scores and machine learning to model disease outcomes.</p>
                 <button onClick={() => openModal('research')} className="card-link" aria-label="Read about predictive genomics research">+</button>
               </article>
+            </div>
+
+            <div className="reveal">
+              <MosaicExplorer onLearnMore={() => openModal('research')} />
             </div>
           </section>
 
@@ -1026,7 +1081,7 @@ const App: React.FC = () => {
 
             <div className="toolkit-grid reveal">
               {toolkit.map((group, index) => (
-                <article key={group.area} className="toolkit-card glass-panel spotlight">
+                <article key={group.area} className="toolkit-card glass-panel spotlight tilt">
                   <span className="card-number">T / {String(index + 1).padStart(2, '0')}</span>
                   <h3>{group.area}</h3>
                   <ul>
@@ -1175,6 +1230,7 @@ const App: React.FC = () => {
         <span aria-hidden="true">{'↑'}</span>
       </button>
 
+      <div ref={cursorRef} className="cursor-aura" aria-hidden="true" />
       <div className={toast ? 'toast visible' : 'toast'} role="status" aria-live="polite">{toast}</div>
 
       <CommandPalette isOpen={isPaletteOpen} onClose={() => setIsPaletteOpen(false)} commands={commands} />
